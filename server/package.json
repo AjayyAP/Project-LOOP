@@ -1,0 +1,26 @@
+{
+  "name": "project-loop-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "latest",
+    "cookie-parser": "latest",
+    "cors": "latest",
+    "csv-parser": "latest",
+    "dotenv": "latest",
+    "express": "latest",
+    "express-validator": "latest",
+    "jsonwebtoken": "latest",
+    "mongoose": "latest",
+    "morgan": "latest",
+    "multer": "latest"
+  },
+  "devDependencies": {
+    "nodemon": "latest"
+  }
+}
