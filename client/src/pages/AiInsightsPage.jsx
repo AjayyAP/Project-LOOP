@@ -15,6 +15,7 @@ function AiInsightsPage() {
   const { workspaceId } = useParams();
   const [insights, setInsights] = useState(null);
   const [filters, setFilters] = useState(initialFilters);
+  const [customRange, setCustomRange] = useState({ startDate: '', endDate: '' });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -23,7 +24,6 @@ function AiInsightsPage() {
       setIsLoading(true);
       setError('');
       if (filters.dateRange === 'Custom Range' && (!filters.startDate || !filters.endDate)) {
-        setError('Select both dates for a custom range.');
         setIsLoading(false);
         return;
       }
@@ -46,6 +46,25 @@ function AiInsightsPage() {
     setFilters((current) => ({ ...current, [name]: value }));
   }
 
+  function updateCustomRange(event) {
+    const { name, value } = event.target;
+    setCustomRange((current) => ({ ...current, [name]: value }));
+  }
+
+  function applyCustomRange() {
+    const { startDate, endDate } = customRange;
+    if (!startDate || !endDate) {
+      setError('Select both dates for a custom range.');
+      return;
+    }
+    if (startDate > endDate) {
+      setError('Start date cannot be after end date.');
+      return;
+    }
+    setError('');
+    setFilters({ dateRange: 'Custom Range', startDate, endDate });
+  }
+
   if (!insights && isLoading) return <main className="workspace-page"><p className="page-status">Loading AI insights...</p></main>;
   if (!insights) return <main className="workspace-page"><section className="form-page-card"><p className="form-error" role="alert">{error}</p><Link className="back-link" to={`/workspaces/${workspaceId}`}><ArrowLeft size={17} /> Workspace details</Link></section></main>;
 
@@ -60,7 +79,7 @@ function AiInsightsPage() {
 
         <section className="insights-date-filter">
           <label>Date range<select name="dateRange" value={filters.dateRange} onChange={updateFilter}><option>Today</option><option>Last 7 Days</option><option>Last 30 Days</option><option>Custom Range</option></select></label>
-          {filters.dateRange === 'Custom Range' && <><label>From<input type="date" name="startDate" value={filters.startDate} onChange={updateFilter} /></label><label>To<input type="date" name="endDate" value={filters.endDate} onChange={updateFilter} /></label></>}
+          {filters.dateRange === 'Custom Range' && <><label>From<input type="date" name="startDate" value={customRange.startDate} onChange={updateCustomRange} /></label><label>To<input type="date" name="endDate" value={customRange.endDate} onChange={updateCustomRange} /></label><button className="secondary-link" type="button" onClick={applyCustomRange}>Apply range</button></>}
         </section>
 
         {isLoading && <p className="page-status">Updating theme trends...</p>}

@@ -68,12 +68,13 @@ function FeedbackListPage() {
   }
 
   const canUpdateStatus = ['Admin', 'Analyst'].includes(viewerRole);
+  const canCreateFeedback = ['Admin', 'Analyst'].includes(viewerRole);
 
   return (
     <main className="workspace-page">
       <section className="workspace-container">
         <Link className="back-link" to={`/workspaces/${workspaceId}`}><ArrowLeft size={17} /> Workspace details</Link>
-        <header className="page-header"><div><p className="eyebrow">Feedback</p><h1>Workspace Feedback</h1><p>Track ideas, improvements, and issues from your team.</p></div><Link className="button-link" to={`/workspaces/${workspaceId}/feedback/new`}><Plus size={18} /> Create Feedback</Link></header>
+        <header className="page-header"><div><p className="eyebrow">Feedback</p><h1>Workspace Feedback</h1><p>Track ideas, improvements, and issues from your team.</p></div>{canCreateFeedback && <Link className="button-link" to={`/workspaces/${workspaceId}/feedback/new`}><Plus size={18} /> Create Feedback</Link>}</header>
         {location.state?.successMessage && <p className="form-success" role="status">{location.state.successMessage}</p>}
 
         <section className="inbox-filter-card">
@@ -92,7 +93,7 @@ function FeedbackListPage() {
 
         {isLoading && <p className="page-status">Loading feedback...</p>}
         {error && <p className="form-error" role="alert">{error}</p>}
-        {!isLoading && !error && pagination.totalItems === 0 && <section className="empty-state"><ClipboardList size={36} /><h2>No feedback found</h2><p>Try clearing filters or create the first feedback item for this workspace.</p><Link className="button-link" to={`/workspaces/${workspaceId}/feedback/new`}><Plus size={18} /> Create Feedback</Link></section>}
+        {!isLoading && !error && pagination.totalItems === 0 && <section className="empty-state"><ClipboardList size={36} /><h2>No feedback found</h2><p>{canCreateFeedback ? 'Try clearing filters or create the first feedback item for this workspace.' : 'Try clearing filters to view feedback from this workspace.'}</p>{canCreateFeedback && <Link className="button-link" to={`/workspaces/${workspaceId}/feedback/new`}><Plus size={18} /> Create Feedback</Link>}</section>}
 
         <section className="feedback-list">
           {feedbackItems.map((feedback) => <article className="feedback-card" key={feedback.id}>

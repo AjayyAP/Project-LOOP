@@ -1,14 +1,22 @@
 import Feedback from '../models/Feedback.js';
 import { answerWorkspaceQuestion } from '../services/workspaceAssistantService.js';
 
+function sentimentRequestedBy(question) {
+  return ['Positive', 'Neutral', 'Negative'].find((sentiment) => new RegExp(`\\b${sentiment}\\b`, 'i').test(question)) || null;
+}
+
 export async function askWorkspace(request, response, next) {
   try {
+    const requestedSentiment = sentimentRequestedBy(request.body.question);
+    const feedbackQuery = requestedSentiment
+      ? { workspace: request.assistantWorkspace._id, sentiment: requestedSentiment }
+      : { workspace: request.assistantWorkspace._id, $text: { $search: request.body.question } };
     const feedback = await Feedback.find(
-      { workspace: request.assistantWorkspace._id, $text: { $search: request.body.question } },
-      { score: { $meta: 'textScore' } },
+      feedbackQuery,
+      requestedSentiment ? undefined : { score: { $meta: 'textScore' } },
     )
       .select('title description sentiment theme featureArea status priority aiSummary')
-      .sort({ score: { $meta: 'textScore' } })
+      .sort(requestedSentiment ? { createdAt: -1 } : { score: { $meta: 'textScore' } })
       .limit(5)
       .lean();
 

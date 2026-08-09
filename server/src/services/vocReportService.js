@@ -26,7 +26,7 @@ export async function generateVocReport(feedback) {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY },
-      signal: AbortSignal.timeout(30000),
+      signal: AbortSignal.timeout(60000),
       body: JSON.stringify({
         contents: [{
           parts: [{
