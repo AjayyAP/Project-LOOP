@@ -9,7 +9,6 @@ const sampleChannels = [
   { value: 'Website', label: 'Website' },
   { value: 'Play Store', label: 'Play Store' },
   { value: 'App Store', label: 'App Store' },
-  { value: 'Slack', label: 'Slack' },
   { value: 'Twitter/X', label: 'X' },
 ];
 
