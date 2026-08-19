@@ -4,7 +4,14 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { addWorkspaceMember, fetchWorkspace, fetchWorkspaceMembers, updateWorkspaceMemberRole } from '../services/workspaceService';
 import { importSampleChannel } from '../services/channelImportService';
 
-const sampleChannels = ['Email', 'Website', 'Play Store', 'App Store', 'Twitter/X'];
+const sampleChannels = [
+  { value: 'Email', label: 'Email' },
+  { value: 'Website', label: 'Website' },
+  { value: 'Play Store', label: 'Play Store' },
+  { value: 'App Store', label: 'App Store' },
+  { value: 'Slack', label: 'Slack' },
+  { value: 'Twitter/X', label: 'X' },
+];
 
 function WorkspaceDetailsPage() {
   const { id } = useParams();
@@ -94,7 +101,7 @@ function WorkspaceDetailsPage() {
         <div className="member-list">{members.map((member) => <article className="member-row" key={member.id}><div className="member-avatar">{member.user.fullName.charAt(0).toUpperCase()}</div><div><strong>{member.user.fullName}</strong><span>{member.user.email}</span></div>{workspace.role === 'Admin' ? <select className="member-role-select" value={member.role} onChange={(event) => handleRoleChange(member.id, event.target.value)}><option>Admin</option><option>Analyst</option><option>Viewer</option></select> : <span className={`role-badge role-${member.role.toLowerCase()}`}>{member.role}</span>}</article>)}</div>
       </section>
       {workspace.role === 'Admin' && <section className="add-member-card"><div className="section-heading"><div><h2>Add a member</h2><p>Enter the email address of an already registered user.</p></div><UserPlus size={22} /></div><form className="add-member-form" onSubmit={handleAddMember}><input type="email" value={memberForm.email} onChange={(event) => setMemberForm((current) => ({ ...current, email: event.target.value }))} placeholder="Email" aria-label="Member email" autoComplete="email" /><select value={memberForm.role} onChange={(event) => setMemberForm((current) => ({ ...current, role: event.target.value }))}><option>Admin</option><option>Analyst</option><option>Viewer</option></select><button type="submit" disabled={isAddingMember}>{isAddingMember ? 'Adding...' : 'Add member'}</button></form>{memberError && <p className="form-error" role="alert">{memberError}</p>}</section>}
-      {showSampleImportModal && <div className="dialog-backdrop" role="presentation"><section className="confirm-dialog channel-import-modal" role="dialog" aria-modal="true" aria-labelledby="channel-import-title"><h2 id="channel-import-title">Import Sample Channel</h2><p>Select a channel to generate realistic sample feedback. Each channel can be imported once per workspace.</p><div className="channel-options">{sampleChannels.map((channel) => <button className={selectedChannel === channel ? 'channel-option is-selected' : 'channel-option'} type="button" key={channel} onClick={() => setSelectedChannel(channel)} disabled={isImportingChannel}>{channel}</button>)}</div>{sampleImportError && <p className="form-error" role="alert">{sampleImportError}</p>}<div className="modal-actions"><button className="secondary-button" type="button" onClick={() => setShowSampleImportModal(false)} disabled={isImportingChannel}>Cancel</button><button className="button-link" type="button" onClick={handleSampleChannelImport} disabled={isImportingChannel}>{isImportingChannel ? 'Importing...' : 'Import'}</button></div></section></div>}
+      {showSampleImportModal && <div className="dialog-backdrop" role="presentation"><section className="confirm-dialog channel-import-modal" role="dialog" aria-modal="true" aria-labelledby="channel-import-title"><h2 id="channel-import-title">Import Sample Channel</h2><p>Select a channel to generate realistic sample feedback. Each channel can be imported once per workspace.</p><div className="channel-options">{sampleChannels.map((channel) => <button className={`${selectedChannel === channel.value ? 'channel-option is-selected' : 'channel-option'}${channel.value === 'Website' ? ' channel-option--website' : ''}`} type="button" key={channel.value} onClick={() => setSelectedChannel(channel.value)} disabled={isImportingChannel}>{channel.label}</button>)}</div>{sampleImportError && <p className="form-error" role="alert">{sampleImportError}</p>}<div className="modal-actions"><button className="secondary-button" type="button" onClick={() => setShowSampleImportModal(false)} disabled={isImportingChannel}>Cancel</button><button className="button-link" type="button" onClick={handleSampleChannelImport} disabled={isImportingChannel}>{isImportingChannel ? 'Importing...' : 'Import'}</button></div></section></div>}
     </section></main>
   );
 }
